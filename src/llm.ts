@@ -35,3 +35,26 @@ export const runLLM = async ({
 
   return response.choices[0].message
 }
+
+export const runApprovalCheck = async (userMessage: string) => {
+  const response = await openai.beta.chat.completions.parse({
+    model: 'gpt-4o-mini',
+    temperature: 0.1,
+    response_format: zodResponseFormat(
+      z.object({
+        approved: z.boolean().describe('did the user say they approved or not'),
+      }),
+      'math_reasoning'
+    ),
+    messages: [
+      {
+        role: 'system',
+        content:
+          'Determine if the user approved the image generation. If you are not sure, then it is not approved.',
+      },
+      { role: 'user', content: userMessage },
+    ],
+  })
+
+  return response.choices[0].message.parsed?.approved
+}
