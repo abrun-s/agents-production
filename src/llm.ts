@@ -65,7 +65,8 @@ export const runApprovalCheck = async (userMessage: string) => {
     messages: [
       {
         role: 'system',
-        content: `Determine if the user approved the image generation. If you are not sure, then it is not approved.`,
+        content:
+          'Determine if the user approved the image generation. If you are not sure, then it is not approved.',
       },
       { role: 'user', content: userMessage },
     ],

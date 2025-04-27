@@ -5,10 +5,12 @@ import { queryMovies } from '../rag/query'
 export const movieSearchToolDefinition = {
   name: 'movieSearch',
   parameters: z.object({
-    query: z.string().describe('query used to vector search on movies'),
+    query: z.string().describe('The search query for finding movies'),
+    genre: z.string().optional().describe('Filter movies by genre'),
+    director: z.string().optional().describe('Filter movies by director'),
   }),
   description:
-    'use this tool to find movies or answer questions about movies and their metada like score, rating, costs, director, actors, and more.',
+    'Searches for movies and information about them, including title, year, genre, director, actors, rating, and description. Use this to answer questions about movies.',
 }
 
 type Args = z.infer<typeof movieSearchToolDefinition.parameters>

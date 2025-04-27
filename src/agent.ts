@@ -1,9 +1,9 @@
+import type { AIMessage } from '../types'
 import { addMessages, getMessages, saveToolResponse } from './memory'
 import { runApprovalCheck, runLLM } from './llm'
 import { showLoader, logMessage } from './ui'
 import { runTool } from './toolRunner'
 import { generateImageToolDefinition } from './tools/generateImage'
-import type { AIMessage } from '../types'
 
 const handleImageApprovalFlow = async (
   history: AIMessage[],
@@ -47,6 +47,7 @@ export const runAgent = async ({
   tools: any[]
 }) => {
   const history = await getMessages()
+
   const isApproval = await handleImageApprovalFlow(history, userMessage)
 
   if (!isApproval) {

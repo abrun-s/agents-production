@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { runLLM } from '../../src/llm'
 import { dadJokeToolDefinition } from '../../src/tools/dadJoke'
 import { generateImageToolDefinition } from '../../src/tools/generateImage'
@@ -12,9 +10,7 @@ const createToolCallMessage = (toolName: string) => ({
   tool_calls: [
     {
       type: 'function',
-      function: {
-        name: toolName,
-      },
+      function: { name: toolName },
     },
   ],
 })
