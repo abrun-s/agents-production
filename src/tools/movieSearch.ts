@@ -15,31 +15,19 @@ export const movieSearchToolDefinition = {
 
 type Args = z.infer<typeof movieSearchToolDefinition.parameters>
 
-export const movieSearch: ToolFn<Args, string> = async ({ toolArgs }) => {
-  const { query, genre, director } = toolArgs
-
-  const filters = {
-    ...(genre && { genre }),
-    ...(director && { director }),
-  }
-
+export const movieSearch: ToolFn<Args> = async ({ userMessage, toolArgs }) => {
   let results
   try {
-    results = await queryMovies(query, filters)
-  } catch (error) {
-    console.error(error)
-    return 'Error: Failed to search for movies'
+    results = await queryMovies({ query: toolArgs.query })
+  } catch (e) {
+    console.error(e)
+    return 'Error: Could not query the db to get movies.'
   }
 
-  const formattedResults = results.map((result) => ({
-    title: result.metadata?.title,
-    year: result.metadata?.year,
-    genre: result.metadata?.genre,
-    director: result.metadata?.director,
-    actors: result.metadata?.actors,
-    rating: result.metadata?.rating,
-    description: result.data,
-  }))
+  const formattedResults = results.map((result) => {
+    const { metadata, data } = result
+    return { ...metadata, description: data }
+  })
 
   return JSON.stringify(formattedResults, null, 2)
 }
