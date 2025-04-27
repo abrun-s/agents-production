@@ -16,7 +16,7 @@ const handleImageApprovalFlow = async (
     !toolCall ||
     toolCall.function.name !== generateImageToolDefinition.name
   ) {
-    return false
+    return
   }
 
   const loader = showLoader('Processing approval...')
@@ -36,7 +36,6 @@ const handleImageApprovalFlow = async (
   }
 
   loader.stop()
-
   return true
 }
 
@@ -48,9 +47,10 @@ export const runAgent = async ({
   tools: any[]
 }) => {
   const history = await getMessages()
-  const isImageApproval = await handleImageApprovalFlow(history, userMessage)
 
-  if (!isImageApproval) {
+  const isApproval = await handleImageApprovalFlow(history, userMessage)
+
+  if (!isApproval) {
     await addMessages([{ role: 'user', content: userMessage }])
   }
 

@@ -1,7 +1,9 @@
 import type { AIMessage } from '../types'
 import { openai } from './ai'
-import { zodFunction } from 'openai/helpers/zod'
+import { zodFunction, zodResponseFormat } from 'openai/helpers/zod'
 import { systemPrompt as defaultSystemPrompt } from './systemPrompt'
+import { z } from 'zod'
+import { getSummary } from './memory'
 
 export const runLLM = async ({
   messages,
@@ -15,6 +17,7 @@ export const runLLM = async ({
   systemPrompt?: string
 }) => {
   const formattedTools = tools.map(zodFunction)
+  const summary = await getSummary()
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -22,7 +25,7 @@ export const runLLM = async ({
     messages: [
       {
         role: 'system',
-        content: systemPrompt || defaultSystemPrompt,
+        content: `${systemPrompt || defaultSystemPrompt}.Conversation summary so far: ${summary}`,
       },
       ...messages,
     ],
@@ -36,15 +39,28 @@ export const runLLM = async ({
   return response.choices[0].message
 }
 
+export const summarizeMessages = async (messages: AIMessage[]) => {
+  const response = await runLLM({
+    systemPrompt:
+    'Summarize the key points of the conversation in a concise way that would be helpful as context for future interactions. Make it like a play by play of the conversation.',
+    messages,
+    temperature: 0.3,
+  })
+
+  return response.content || ''
+}
+
 export const runApprovalCheck = async (userMessage: string) => {
-  const response = await openai.beta.chat.completions.parse({
+  const result = await openai.beta.chat.completions.parse({
     model: 'gpt-4o-mini',
     temperature: 0.1,
     response_format: zodResponseFormat(
       z.object({
-        approved: z.boolean().describe('did the user say they approved or not'),
+        approved: z
+          .boolean()
+          .describe('did the user approve the action or not'),
       }),
-      'math_reasoning'
+      'approval'
     ),
     messages: [
       {
@@ -56,5 +72,5 @@ export const runApprovalCheck = async (userMessage: string) => {
     ],
   })
 
-  return response.choices[0].message.parsed?.approved
+  return result.choices[0].message.parsed?.approved
 }
