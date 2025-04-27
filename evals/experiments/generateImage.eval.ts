@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { runLLM } from '../../src/llm'
 import { generateImageToolDefinition } from '../../src/tools/generateImage'
 import { runEval } from '../evalTools'
@@ -10,9 +8,7 @@ const createToolCallMessage = (toolName: string) => ({
   tool_calls: [
     {
       type: 'function',
-      function: {
-        name: toolName,
-      },
+      function: { name: toolName },
     },
   ],
 })
