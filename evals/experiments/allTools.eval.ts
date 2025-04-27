@@ -1,9 +1,9 @@
-import { runEval } from '../evalTools'
 import { runLLM } from '../../src/llm'
-import { ToolCallMatch } from '../scorers'
-import { redditToolDefinition } from '../../src/tools/reddit'
-import { generateImageToolDefinition } from '../../src/tools/generateImage'
 import { dadJokeToolDefinition } from '../../src/tools/dadJoke'
+import { generateImageToolDefinition } from '../../src/tools/generateImage'
+import { redditToolDefinition } from '../../src/tools/reddit'
+import { runEval } from '../evalTools'
+import { ToolCallMatch } from '../scorers'
 
 const createToolCallMessage = (toolName: string) => ({
   role: 'assistant',
@@ -16,9 +16,9 @@ const createToolCallMessage = (toolName: string) => ({
 })
 
 const allTools = [
-  redditToolDefinition,
-  generateImageToolDefinition,
   dadJokeToolDefinition,
+  generateImageToolDefinition,
+  redditToolDefinition,
 ]
 
 runEval('allTools', {
@@ -29,16 +29,16 @@ runEval('allTools', {
     }),
   data: [
     {
-      input: 'tell me something interesting from reddit',
-      expected: createToolCallMessage(redditToolDefinition.name),
+      input: 'Tell me a funny dad joke',
+      expected: createToolCallMessage(dadJokeToolDefinition.name),
     },
     {
-      input: 'generate an image of a mountain landscape',
+      input: 'take a photo of mars',
       expected: createToolCallMessage(generateImageToolDefinition.name),
     },
     {
-      input: 'tell me a dad joke',
-      expected: createToolCallMessage(dadJokeToolDefinition.name),
+      input: 'what is the most upvoted post on reddit',
+      expected: createToolCallMessage(redditToolDefinition.name),
     },
   ],
   scorers: [ToolCallMatch],

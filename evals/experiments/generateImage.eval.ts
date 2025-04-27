@@ -1,7 +1,7 @@
-import { runEval } from '../evalTools'
 import { runLLM } from '../../src/llm'
-import { ToolCallMatch } from '../scorers'
 import { generateImageToolDefinition } from '../../src/tools/generateImage'
+import { runEval } from '../evalTools'
+import { ToolCallMatch } from '../scorers'
 
 const createToolCallMessage = (toolName: string) => ({
   role: 'assistant',
@@ -21,7 +21,11 @@ runEval('generateImage', {
     }),
   data: [
     {
-      input: 'can you generate an image of a sunset',
+      input: 'Generate an image of a sunset',
+      expected: createToolCallMessage(generateImageToolDefinition.name),
+    },
+    {
+      input: 'take a photo of the sunset',
       expected: createToolCallMessage(generateImageToolDefinition.name),
     },
   ],

@@ -1,7 +1,7 @@
-import { runEval } from '../evalTools'
 import { runLLM } from '../../src/llm'
-import { ToolCallMatch } from '../scorers'
 import { dadJokeToolDefinition } from '../../src/tools/dadJoke'
+import { runEval } from '../evalTools'
+import { ToolCallMatch } from '../scorers'
 
 const createToolCallMessage = (toolName: string) => ({
   role: 'assistant',
@@ -21,7 +21,7 @@ runEval('dadJoke', {
     }),
   data: [
     {
-      input: 'tell me a dad joke',
+      input: 'Tell me a funny dad joke',
       expected: createToolCallMessage(dadJokeToolDefinition.name),
     },
   ],
